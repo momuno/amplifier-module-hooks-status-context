@@ -93,12 +93,13 @@ class StatusContextHook:
         if self.include_git and env_info.get("is_git_repo"):
             git_details = self._gather_git_context()
 
-        # Build context injection
+        # Build context injection wrapped in system-reminder tags
         context_parts = [env_info["formatted"]]
         if git_details:
             context_parts.append(git_details)
 
-        context_injection = "\n\n".join(context_parts)
+        context_content = "\n\n".join(context_parts)
+        context_injection = f"<system-reminder>\n{context_content}\n</system-reminder>"
 
         return HookResult(
             action="inject_context",

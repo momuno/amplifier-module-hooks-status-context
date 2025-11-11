@@ -23,6 +23,7 @@ hooks:
 **In git repository:**
 
 ```
+<system-reminder>
 Here is useful information about the environment you are running in:
 <env>
 Working directory: /home/user/projects/myapp
@@ -44,11 +45,13 @@ M src/api.py
 Recent commits:
 abc1234 feat: Add new API endpoint
 def5678 refactor: Simplify request handling
+</system-reminder>
 ```
 
 **Outside git repository:**
 
 ```
+<system-reminder>
 Here is useful information about the environment you are running in:
 <env>
 Working directory: /home/user/documents
@@ -57,6 +60,7 @@ Platform: linux
 OS Version: Linux 6.6.87.2-microsoft-standard-WSL2
 Today's date: 2025-11-09 14:23:45
 </env>
+</system-reminder>
 ```
 
 Note: Git status only shown when in a git repository and `include_git: true`. Date format includes time when `include_datetime: true`, otherwise date only.
