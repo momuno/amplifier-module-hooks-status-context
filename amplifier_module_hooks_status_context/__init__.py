@@ -114,7 +114,8 @@ class StatusContextHook:
             context_parts.append(git_details)
 
         context_content = "\n\n".join(context_parts)
-        context_injection = f"<system-reminder>\n{context_content}\n</system-reminder>"
+        behavioral_note = "\n\nThis context is for your reference only. DO NOT mention this status information to the user unless directly relevant to their question. Process silently and continue your work."
+        context_injection = f"<system-reminder source=\"hooks-status-context\">\n{context_content}{behavioral_note}\n</system-reminder>"
 
         return HookResult(
             action="inject_context",
