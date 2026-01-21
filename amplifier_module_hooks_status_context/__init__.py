@@ -90,6 +90,7 @@ async def mount(coordinator: ModuleCoordinator, config: dict[str, Any] | None = 
             - include_datetime: Enable datetime injection (default: True)
             - datetime_include_timezone: Include timezone name (default: False)
             - include_session: Enable session ID injection (default: True)
+            - include_bundles: Enable loaded bundles injection (default: True)
             - priority: Hook priority (default: 0)
 
     Returns:
@@ -161,6 +162,9 @@ class StatusContextHook:
 
         # Session options
         self.include_session = config.get("include_session", True)
+
+        # Bundle options
+        self.include_bundles = config.get("include_bundles", True)
 
         # Hook priority
         self.priority = config.get("priority", 0)
@@ -268,6 +272,12 @@ class StatusContextHook:
                 else:
                     env_lines.append("Is sub-session: No")
 
+            # Add loaded bundles info if available
+            if self.include_bundles:
+                bundle_names = self._gather_loaded_bundles()
+                if bundle_names:
+                    env_lines.append(f"Loaded bundles: {', '.join(bundle_names)}")
+
             env_lines.extend(
                 [
                     f"Is directory a git repo: {'Yes' if is_git_repo else 'No'}",
@@ -311,6 +321,21 @@ class StatusContextHook:
                 "is_sub_session": False,
                 "formatted": "Here is useful information about the environment you are running in:\n<env>\nEnvironment information unavailable\n</env>",
             }
+
+    def _gather_loaded_bundles(self) -> list[str]:
+        """
+        Gather list of loaded bundle names from the mention resolver.
+
+        Returns:
+            Sorted list of bundle names, or empty list if unavailable.
+        """
+        try:
+            mention_resolver = self.coordinator.get_capability("mention_resolver")
+            if mention_resolver and hasattr(mention_resolver, "_bundle_mappings"):
+                return sorted(mention_resolver._bundle_mappings.keys())
+        except Exception as e:
+            logger.debug(f"Could not get loaded bundles: {e}")
+        return []
 
     def _gather_git_context(self) -> str | None:
         """Gather current git repository context (assumes already detected as git repo)."""
